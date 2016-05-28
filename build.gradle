@@ -1,0 +1,57 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+    }
+
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.13'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'io.vertx:vertx-web:3.2.1'
+    compile 'com.knowably:twitter4j-core:4.0.5'
+    compile 'mysql:mysql-connector-java:6.0.2'
+}
+
+//Run and compile
+group 'org.frobs'
+version '0.0.1'
+sourceCompatibility = 1.8
+mainClassName = 'io.vertx.core.Launcher'
+
+def mainVerticleName = 'org.frobs.communityeverywhere.App'
+def watchForChange = 'src/**/*.java'
+def doOnChange = './gradlew classes'
+
+shadowJar {
+    archiveName = "communityEverywhere-${version}.${extension}"
+    manifest {
+        attributes 'Main-Verticle': mainVerticleName
+    }
+    mergeServiceFiles {
+        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+        include 'src/main/resources'
+    }
+}
+
+run {
+    args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange"]
+}
