@@ -80,12 +80,12 @@ def loadConfiguration() {
     sourceCompatibility = 1.8
     mainClassName = 'io.vertx.core.Launcher'
 
-    def mainVerticleName = 'org.frobs.communityeverywhere.App'
+    def mainVerticleName = 'org.frobs.twitter4x.App'
     def watchForChange = 'src/**/*.java'
     def doOnChange = './gradlew classes'
 
     shadowJar {
-        archiveName = "communityEverywhere-${version}.${extension}"
+        archiveName = "twitter4x-${version}.${extension}"
         manifest {
             attributes 'Main-Verticle': mainVerticleName
         }
