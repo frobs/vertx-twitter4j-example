@@ -1,3 +1,4 @@
+import groovy.util.ConfigSlurper;
 buildscript {
     repositories {
         jcenter()
@@ -10,7 +11,6 @@ buildscript {
         classpath 'mysql:mysql-connector-java:5.1.34'
         classpath 'org.flywaydb:flyway-gradle-plugin:3.1'
     }
-
 }
 
 apply plugin: 'flyway'
@@ -34,27 +34,38 @@ dependencies {
     compile 'mysql:mysql-connector-java:6.0.2'
 }
 
+loadConfiguration()
+
+def loadConfiguration() {
+    def environment = hasProperty('env') ? env : 'development'
+    setProperty 'environment', environment
+    println "Environment is set to $environment"
+
+    def configFile = file(buildConfigurationFile)
+    def config = new ConfigSlurper(environment).parse(configFile.toURL())
+    setProperty 'config', config
+}
+
 //Database migration
     task createDatabase << {
         flyway {
-            url = 'jdbc:mysql://localhost'
-            user = 'root'
-            password = 'xxxx'
-            schemas = ['twitterx']
+            url = 'jdbc:mysql://' + config.database.server + ':' +config.database.port
+            user = config.database.user
+            password = config.database.password
+            schemas = [config.database.name]
             baselineOnMigrate = true
             baselineVersion = 1
-            //baselineDescription = "Create schema"
         }
         flywayMigrate.execute();
     }
 
     task createTables << {
         flyway {
-            url = 'jdbc:mysql://localhost/twitterx'
-            user = 'root'
-            password = 'xxxx'
+            url = 'jdbc:mysql://' + config.database.server + ':' +config.database.port + '/' + config.database.name
+            user = config.database.user
+            password = config.database.password
             locations = [
-                    "filesystem:${projectDir}/database/migrations"
+                    "filesystem:${projectDir}$migrationsPath"
             ]
             baselineOnMigrate = true
             baselineVersion = 1.1
