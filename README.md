@@ -5,14 +5,19 @@ This project is a functional example about how to create a full VertX project wi
 ## Components
 * VertX 3.2.1
 * Twitter4j 4.0.5
+* Gradle 2.13
+* MySql
 
 ## Instructions
 
-### Database Script
-`resources/database/create_database.sql`
-
 ### Install gradle wrapper
 `./gradlew` or `gradlew.bat`
+
+### Create database
+`./gradlew createDatabase`
+
+### Create tables
+`./gradlew createTables`
 
 ### Compile
 `./gradlew shadowJar`
