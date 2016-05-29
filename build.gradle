@@ -7,10 +7,13 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'mysql:mysql-connector-java:5.1.34'
+        classpath 'org.flywaydb:flyway-gradle-plugin:3.1'
     }
 
 }
 
+apply plugin: 'flyway'
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -31,27 +34,56 @@ dependencies {
     compile 'mysql:mysql-connector-java:6.0.2'
 }
 
+//Database migration
+    task createDatabase << {
+        flyway {
+            url = 'jdbc:mysql://localhost'
+            user = 'root'
+            password = 'xxxx'
+            schemas = ['twitterx']
+            baselineOnMigrate = true
+            baselineVersion = 1
+            //baselineDescription = "Create schema"
+        }
+        flywayMigrate.execute();
+    }
+
+    task createTables << {
+        flyway {
+            url = 'jdbc:mysql://localhost/twitterx'
+            user = 'root'
+            password = 'xxxx'
+            locations = [
+                    "filesystem:${projectDir}/database/migrations"
+            ]
+            baselineOnMigrate = true
+            baselineVersion = 1.1
+            baselineDescription = "Create Tables"
+        }
+        flywayMigrate.execute();
+    }
+
 //Run and compile
-group 'org.frobs'
-version '0.0.1'
-sourceCompatibility = 1.8
-mainClassName = 'io.vertx.core.Launcher'
+    group 'org.frobs'
+    version '0.0.1'
+    sourceCompatibility = 1.8
+    mainClassName = 'io.vertx.core.Launcher'
 
-def mainVerticleName = 'org.frobs.communityeverywhere.App'
-def watchForChange = 'src/**/*.java'
-def doOnChange = './gradlew classes'
+    def mainVerticleName = 'org.frobs.communityeverywhere.App'
+    def watchForChange = 'src/**/*.java'
+    def doOnChange = './gradlew classes'
 
-shadowJar {
-    archiveName = "communityEverywhere-${version}.${extension}"
-    manifest {
-        attributes 'Main-Verticle': mainVerticleName
+    shadowJar {
+        archiveName = "communityEverywhere-${version}.${extension}"
+        manifest {
+            attributes 'Main-Verticle': mainVerticleName
+        }
+        mergeServiceFiles {
+            include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
+            include 'src/main/resources'
+        }
     }
-    mergeServiceFiles {
-        include 'META-INF/services/io.vertx.core.spi.VerticleFactory'
-        include 'src/main/resources'
-    }
-}
 
-run {
-    args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange"]
-}
+    run {
+        args = ['run', mainVerticleName, "--redeploy=$watchForChange", "--launcher-class=$mainClassName", "--on-redeploy=$doOnChange"]
+    }
