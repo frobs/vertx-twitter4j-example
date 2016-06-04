@@ -53,7 +53,7 @@ public class TwitterAuthHandlers {
         if( userId > 0){
             twitterUserModel.setId(userId);
         }
-        TwitterUserDao.updateUser(DefaultDatabaseConnection.get(),twitterUserModel);
+        TwitterUserDao.saveUser(DefaultDatabaseConnection.get(),twitterUserModel);
         RequestHelper.redirect(context,"/");
     }
 }

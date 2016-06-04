@@ -48,11 +48,11 @@ public class TwitterUserStatements {
     }
 
     public static PreparedStatement updateUser(final Connection connection, TwitterUserModel user){
-        String insertUserQuery = "UPDATE twitter "
+        String updateUserQuery = "UPDATE twitter "
                 + "SET `name`= ?, `key` = ?, `secret` = ?, `verifier` = ? WHERE `id` = ?";
         PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement(insertUserQuery);
+            statement = connection.prepareStatement(updateUserQuery);
             statement.setString(1, user.getName());
             statement.setString(2, user.getCredentials().getKey());
             statement.setString(3, user.getCredentials().getSecret());

@@ -57,7 +57,7 @@ public class TwitterUserDao {
         return twitterUserList;
     }
 
-    public static boolean updateUser(final Connection connection, final TwitterUserModel user) {
+    public static boolean saveUser(final Connection connection, final TwitterUserModel user) {
         final PreparedStatement statement;
         if(user.getId() > 0){
             statement = TwitterUserStatements.updateUser(connection, user);
