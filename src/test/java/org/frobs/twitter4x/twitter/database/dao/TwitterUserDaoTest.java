@@ -6,19 +6,25 @@ import org.frobs.twitter4x.twitter.database.models.TwitterUserModel;
 import org.frobs.twitter4x.twitter.types.TwitterCredentials;
 
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 import static junit.framework.TestCase.*;
 
 public class TwitterUserDaoTest {
 
+    @Before
+    public void executedBeforeEach() {
+        clean();
+    }
+
     @Test
     public void createUser() throws Exception {
-        truncate();
         TwitterCredentials credentials = new TwitterCredentials();
         credentials.setKey("key");
         credentials.setSecret("secret");
@@ -34,7 +40,6 @@ public class TwitterUserDaoTest {
 
     @Test
     public void updateUser() throws Exception {
-        truncate();
         createUser();
         TwitterCredentials credentials = new TwitterCredentials();
         credentials.setKey("key");
@@ -50,7 +55,31 @@ public class TwitterUserDaoTest {
         assertTrue(result);
     }
 
-    private void truncate() {
+    @Test
+    public void getAllUsers() throws Exception {
+        createUser();
+        TwitterCredentials credentials = new TwitterCredentials();
+        credentials.setKey("second-key");
+        credentials.setSecret("secret_changed");
+        credentials.setVerifier("verifier");
+
+        TwitterUserModel model = new TwitterUserModel();
+        model.setName("test_name2");
+        model.setCredentials(credentials);
+
+        TwitterUserDao.saveUser(TwitterTestDatabase.get(), model);
+        List<TwitterUserModel> result = TwitterUserDao.getAll(TwitterTestDatabase.get());
+        assertEquals(2,result.size());
+    }
+
+    @Test
+    public void getByName() throws Exception {
+        createUser();
+        TwitterUserModel user = TwitterUserDao.getByName(TwitterTestDatabase.get(), "test_name");
+        assertEquals(1,user.getId());
+    }
+
+    private void clean() {
         Connection connection = TwitterTestDatabase.get();
         PreparedStatement statement = null;
         try {
