@@ -1,7 +1,9 @@
 package org.frobs.twitter4x.twitter.types;
 
 
-public class TwitterCredentials {
+import org.frobs.twitter4x.common.SerializableObject;
+
+public class TwitterCredentials implements SerializableObject {
     private String key;
     private String secret;
     private String verifier;
@@ -40,10 +42,18 @@ public class TwitterCredentials {
     @Override
     public String toString() {
         return "TwitterCredentials{" +
-                ", key='" + key + '\'' +
-                ", secret='" + secret + '\'' +
-                ", verifier='" + verifier + '\'' +
-                '}';
+            "key='" + key + '\'' +
+            ", secret='" + secret + '\'' +
+            ", verifier='" + verifier + '\'' +
+            '}';
     }
 
+    @Override
+    public String toJson() {
+        return "{" +
+                "\"key\" : \"" + key + "\"" +
+                ", \"secret\" : \"" + secret + "\"" +
+                ", \"verifier\" : \"" + verifier + "\"" +
+                "}";
+    }
 }

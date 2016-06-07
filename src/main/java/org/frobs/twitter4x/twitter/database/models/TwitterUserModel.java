@@ -3,7 +3,7 @@ package org.frobs.twitter4x.twitter.database.models;
 import org.frobs.twitter4x.common.database.Model;
 import org.frobs.twitter4x.twitter.types.TwitterCredentials;
 
-public class TwitterUserModel extends Model {
+public class TwitterUserModel implements Model {
     private int id;
     private String name;
     private TwitterCredentials credentials;
@@ -41,16 +41,13 @@ public class TwitterUserModel extends Model {
                 '}';
     }
 
+
     @Override
     public String toJson() {
         return "{" +
-                "\"id\":" + id +
-                ", \"name\":\"" + name + "\"" +
-                ", \"credentials\": {" +
-                ", \"key\":\"" + credentials.getKey() + "\"" +
-                ", \"secret\":\"" + credentials.getSecret() + "\"" +
-                ", \"verifier\":\"" + credentials.getVerifier() + "\"" +
-                "}" +
+                "\"id\" : " + id +
+                ", \"name\" : \"" + name + "\"" +
+                ", \"credentials\" : " + credentials.toJson() +
                 "}";
     }
 }
