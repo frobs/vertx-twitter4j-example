@@ -48,6 +48,15 @@ The default mode is development, we can change this adding `-Penv=mode` to gradl
 ## Api
 http://localhost:8080/twitter/timeline/?username=twitter_user // Twitter user timeline
 
-
+##TODO
+* Integration with some CI System (maybe Travis)
+* Wrap twitter4j code inside a proper class ( We shouldn't use alien code mixed with our code, What can we do if twitter4j api change?)
+* Add Integration test, test routes with http client
+* Add a interface with MVC client ( Maybe Angular 2 or React...any suggestion?)
+* Add acceptance tests with selenium
+* Change unite test to Spock instead of JUnit
+* Automate test run
+* Add Aceptation Test
+* 
 
 
